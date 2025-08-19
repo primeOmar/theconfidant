@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Edu+SA+Hand:wght@400..700&family=Fjalla+One&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import "tailwindcss";
+
+
+@theme {  
+  --color-dark-500: rgba(4, 9, 31, 1);
+  --color-heroBg: rgba(7, 9, 7, 0.92);
+  --color-para: rgba(90, 153, 89, 1);
+  --primary: rgba(255, 255, 255, 0.91);
+  --font-title: 'Fjalla One', sans-serif;
+  --font-body: 'Rubik', sans-serif;
+  --font-hand: 'Edu SA Hand', cursive;
+ 
+}
