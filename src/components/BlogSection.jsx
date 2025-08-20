@@ -77,7 +77,7 @@ const BlogSection = () => {
   };
 
   return (
-    <section className="py-16 px-6 bg-dark-500 text-gray-900">
+    <section className="py-16 px-6 bg-dark-500 text-gray-900" id="blog">
       <h2 className="text-4xl text-white font-bold text-center mb-8">Latest Blog Posts</h2>
 
       {/* Blog Grid */}
