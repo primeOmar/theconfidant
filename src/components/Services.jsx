@@ -8,12 +8,12 @@ const Services = () => {
   const [showChat, setShowChat] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const username = `User-${uuidv4().substring(0, 8)}`;
+  const username = useRef(`User-${uuidv4().substring(0, 8)}`).current;
   const socketRef = useRef(null);
   const chatRef = useRef(null);
 
+  // Initialize Socket.IO
   useEffect(() => {
-    // Connect to live backend
     socketRef.current = io("https://counselling-backend-nelf.onrender.com", {
       transports: ["websocket", "polling"],
       autoConnect: true,
@@ -38,32 +38,30 @@ const Services = () => {
     };
   }, []);
 
-  // Auto-scroll
+  // Auto-scroll to bottom
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [messages]);
 
+  // Send message
   const handleSend = useCallback(() => {
-  if (!message.trim()) return;
+    if (!message.trim()) return;
 
-  const newMessage = {
-    sender: username,
-    text: message.trim(),
-    timestamp: new Date().toISOString(),
-  };
+    const newMessage = {
+      sender: username,
+      text: message.trim(),
+      timestamp: new Date().toISOString(),
+    };
 
-  // Send to backend
-  socketRef.current.emit("sendMessage", newMessage);
-
-  // Do NOT add it locally! The backend will broadcast it back
-  setMessage("");
-}, [message, username]);
-
+    socketRef.current.emit("sendMessage", newMessage);
+    setMessage("");
+  }, [message, username]);
 
   return (
     <>
+      {/* Toggle Button */}
       <button
         className={`chat-toggle-button ${showChat ? "hidden" : ""}`}
         onClick={() => setShowChat(true)}
@@ -73,6 +71,7 @@ const Services = () => {
 
       {showChat && (
         <div className="chat-window">
+          {/* Header */}
           <div className="chat-header">
             <h2>Anonymous Chat</h2>
             <button onClick={() => setShowChat(false)}>
@@ -80,6 +79,7 @@ const Services = () => {
             </button>
           </div>
 
+          {/* Messages */}
           <div ref={chatRef} className="chat-messages">
             {messages
               .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
@@ -99,8 +99,10 @@ const Services = () => {
               ))}
           </div>
 
+          {/* Input */}
           <div className="chat-input">
             <input
+              type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
