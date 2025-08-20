@@ -14,7 +14,7 @@ const Services = () => {
 
   // Initialize Socket.IO connection
   useEffect(() => {
-    socketRef.current = io('http://localhost:5000', {
+    socketRef.current = io(' https://counselling-backend-nelf.onrender.com', {
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
       autoConnect: true,
