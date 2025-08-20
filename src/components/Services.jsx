@@ -46,19 +46,21 @@ const Services = () => {
   }, [messages]);
 
   const handleSend = useCallback(() => {
-    if (!message.trim()) return;
+  if (!message.trim()) return;
 
-    const newMessage = {
-      sender: username,
-      text: message.trim(),
-      timestamp: new Date().toISOString(),
-    };
+  const newMessage = {
+    sender: username,
+    text: message.trim(),
+    timestamp: new Date().toISOString(),
+  };
 
-    // Send to backend
-    socketRef.current.emit("sendMessage", newMessage);
-    setMessage("");
-    setMessages((prev) => [...prev, newMessage]);
-  }, [message, username]);
+  // Send to backend
+  socketRef.current.emit("sendMessage", newMessage);
+
+  // Do NOT add it locally! The backend will broadcast it back
+  setMessage("");
+}, [message, username]);
+
 
   return (
     <>
