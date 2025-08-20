@@ -95,8 +95,8 @@ const Services = () => {
                   className={`message ${msg.sender === userId ? "sent" : "received"}`}
                 >
                   <p className="sender">
-                    {msg.sender === userId ? "You" : msg.sender}
-                  </p>
+  {msg.sender}
+</p>
                   <p className="text">{msg.text}</p>
                   <p className="timestamp">
                     {new Date(msg.timestamp).toLocaleTimeString()}
