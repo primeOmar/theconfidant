@@ -10,6 +10,7 @@ import Services from './components/Services';
 import AboutSection from './components/About';
 import Footer from './components/Footer';
 import ContactForm from './components/Contact';
+import BlogSection from './components/BlogSection';
 import BookingForm from './components/BookingForm'; // Assuming this is your booking component
 
 
@@ -19,6 +20,7 @@ function HomePage() {
       <Navbar />
       <HeroSection />
       <Services />
+      <BlogSection />
       <AboutSection />
       <ContactForm />
       <Footer />
