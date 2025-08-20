@@ -8,11 +8,22 @@ const Services = () => {
   const [showChat, setShowChat] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const username = useRef(`User-${uuidv4().substring(0, 8)}`).current;
-  const socketRef = useRef(null);
   const chatRef = useRef(null);
 
-  // Initialize Socket.IO
+  // Persistent user ID
+  const getUserId = () => {
+    let id = localStorage.getItem("anonymousUserId");
+    if (!id) {
+      id = `User-${uuidv4().substring(0, 8)}`;
+      localStorage.setItem("anonymousUserId", id);
+    }
+    return id;
+  };
+  const userId = useRef(getUserId()).current;
+
+  // Socket ref
+  const socketRef = useRef(null);
+
   useEffect(() => {
     socketRef.current = io("https://counselling-backend-nelf.onrender.com", {
       transports: ["websocket", "polling"],
@@ -21,47 +32,44 @@ const Services = () => {
 
     const socket = socketRef.current;
 
-    socket.on("connect", () => {
-      console.log("✅ Connected to server:", socket.id);
+    socket.on("connect", () => console.log("✅ Connected:", socket.id));
+
+    // Load last 20 messages
+    socket.on("chat_history", (history) => {
+      setMessages(history);
     });
 
+    // Receive new messages
     socket.on("receiveMessage", (data) => {
       setMessages((prev) => [...prev, data]);
     });
 
-    socket.on("connect_error", (err) => {
-      console.error("❌ Connection error:", err.message);
-    });
+    socket.on("connect_error", (err) =>
+      console.error("❌ Connection error:", err.message)
+    );
 
-    return () => {
-      socket.disconnect();
-    };
+    return () => socket.disconnect();
   }, []);
 
-  // Auto-scroll to bottom
+  // Auto-scroll
   useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
+    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
 
   // Send message
   const handleSend = useCallback(() => {
     if (!message.trim()) return;
-
     const newMessage = {
-      sender: username,
+      sender: userId,
       text: message.trim(),
       timestamp: new Date().toISOString(),
     };
-
     socketRef.current.emit("sendMessage", newMessage);
     setMessage("");
-  }, [message, username]);
+  }, [message, userId]);
 
   return (
     <>
-      {/* Toggle Button */}
       <button
         className={`chat-toggle-button ${showChat ? "hidden" : ""}`}
         onClick={() => setShowChat(true)}
@@ -71,7 +79,6 @@ const Services = () => {
 
       {showChat && (
         <div className="chat-window">
-          {/* Header */}
           <div className="chat-header">
             <h2>Anonymous Chat</h2>
             <button onClick={() => setShowChat(false)}>
@@ -79,18 +86,17 @@ const Services = () => {
             </button>
           </div>
 
-          {/* Messages */}
           <div ref={chatRef} className="chat-messages">
             {messages
               .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
               .map((msg, idx) => (
                 <div
                   key={`${msg.timestamp}-${idx}`}
-                  className={`message ${
-                    msg.sender === username ? "sent" : "received"
-                  }`}
+                  className={`message ${msg.sender === userId ? "sent" : "received"}`}
                 >
-                  <p className="sender">{msg.sender}</p>
+                  <p className="sender">
+                    {msg.sender === userId ? "You" : msg.sender}
+                  </p>
                   <p className="text">{msg.text}</p>
                   <p className="timestamp">
                     {new Date(msg.timestamp).toLocaleTimeString()}
@@ -99,7 +105,6 @@ const Services = () => {
               ))}
           </div>
 
-          {/* Input */}
           <div className="chat-input">
             <input
               type="text"
