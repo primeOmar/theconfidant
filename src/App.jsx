@@ -20,8 +20,8 @@ function HomePage() {
       <Navbar />
       <HeroSection />
       <Services />
-      <BlogSection />
       <AboutSection />
+      <BlogSection />
       <ContactForm />
       <Footer />
     </div>
