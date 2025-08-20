@@ -78,7 +78,7 @@ const BlogSection = () => {
 
   return (
     <section className="py-16 px-6 bg-dark-500 text-gray-900">
-      <h2 className="text-4xl font-bold text-center mb-8">Latest Blog Posts</h2>
+      <h2 className="text-4xl text-white font-bold text-center mb-8">Latest Blog Posts</h2>
 
       {/* Blog Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
